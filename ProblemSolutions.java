@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   ADD YOUR NAME / SECTION NUMBER HERE
+ *   Luciana Pinel / 002
  *
  *   This java file contains the problem solutions of canFinish and
  *   numGroups methods.
@@ -72,18 +72,52 @@ class ProblemSolutions {
      * @return boolean          - True if all exams can be taken, else false.
      */
 
-    public boolean canFinish(int numExams, 
+    public boolean canFinish(int numExams,
                              int[][] prerequisites) {
-      
+
         int numNodes = numExams;  // # of nodes in graph
 
         // Build directed graph's adjacency list
-        ArrayList<Integer>[] adj = getAdjList(numExams, 
-                                        prerequisites); 
+        ArrayList<Integer>[] adj = getAdjList(numExams,
+                prerequisites);
 
         // ADD YOUR CODE HERE - ADD YOUR NAME / SECTION AT TOP OF FILE
-        return false;
 
+        // Step 1: compute in-degree
+        int[] inDegree = new int[numExams];
+
+        for (int i = 0; i < numExams; i++) {
+            for (int neighbor : adj[i]) {
+                inDegree[neighbor]++;
+            }
+        }
+
+        // Step 2: queue of nodes with no prerequisites
+        Queue<Integer> queue = new LinkedList<>();
+
+        for (int i = 0; i < numExams; i++) {
+            if (inDegree[i] == 0) {
+                queue.offer(i);
+            }
+        }
+
+        int count = 0;
+
+        // Step 3: Kahn’s Algorithm (topological sort)
+        while (!queue.isEmpty()) {
+            int curr = queue.poll();
+            count++;
+
+            for (int neighbor : adj[curr]) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
+                    queue.offer(neighbor);
+                }
+            }
+        }
+
+        // Step 4: if all nodes processed → no cycle
+        return count == numExams;
     }
 
 
@@ -190,9 +224,30 @@ class ProblemSolutions {
             }
         }
 
-        // YOUR CODE GOES HERE - you can add helper methods, you do not need
-        // to put all code in this method.
-        return -1;
+        // YOUR CODE GOES HERE
+        boolean[] visited = new boolean[numNodes];
+        int groups = 0;
+
+        for (int person = 0; person < numNodes; person++) {
+            if (!visited[person]) {
+                groups++;
+                dfs(person, graph, visited);
+            }
+        }
+
+        return groups;
+    }
+
+    private void dfs(int node, Map<Integer, List<Integer>> graph, boolean[] visited) {
+        visited[node] = true;
+
+        if (!graph.containsKey(node)) return; // isolated node
+
+        for (int neighbor : graph.get(node)) {
+            if (!visited[neighbor]) {
+                dfs(neighbor, graph, visited);
+            }
+        }
     }
 
 }

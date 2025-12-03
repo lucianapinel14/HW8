@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Luciana Pinel / 002
  *
  *   Note, additional comments provided throughout this source code
  *   is for educational purposes
@@ -105,6 +105,32 @@ public class Graph {
   public int findRoot() {
 
     // ADD YOUR CODE HERE - DO NOT FORGET TO ADD YOUR NAME/SECTION AT TOP OF FILE
-    return -1;
+      // Step 1: compute in-degree of all vertices
+      int[] inDegree = new int[numVertices];
+
+      for (int src = 0; src < numVertices; src++) {
+          for (int dest : adjListArr[src]) {
+              inDegree[dest]++;    // incoming edge to dest
+          }
+      }
+
+      // Step 2: count how many vertices have no incoming edges
+      int rootIndex = -1;
+      int countRoots = 0;
+
+      for (int i = 0; i < numVertices; i++) {
+          if (inDegree[i] == 0) {
+              countRoots++;
+              rootIndex = i;
+          }
+      }
+
+      // Step 3: must be exactly one root
+      if (countRoots != 1) {
+          return -1;
+      }
+
+      // Step 4: return the VALUE stored at that root vertex
+      return vertexValues.get(rootIndex);
   } 
 }
